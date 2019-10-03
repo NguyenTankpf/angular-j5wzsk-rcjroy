@@ -34,7 +34,7 @@ selection = new SelectionModel<any>(true, []);
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
+    const numRows = this.dataSource? this.dataSource.data.length:0;
     return numSelected === numRows;
   }
 
@@ -88,7 +88,16 @@ selection = new SelectionModel<any>(true, []);
        this.dataSource = new MatTableDataSource((this.form.get('albums') as FormArray).controls);
    }
    onClone(){
-     console.log(this.selection);
+     if(this.selection.selected && this.selection.selected .length>0){
+        this.selection.selected.forEach(item=>{
+          const idx = this.dataSource.data.indexOf(item);
+          console.log(idx);
+          const cloneItem = JSON.parse(JSON.stringify(item)) as FormGroup;
+          cloneItem.get('id').setValue(0);
+           (this.form.get('albums') as FormArray).insert(idx,cloneItem);
+            this.dataSource = new MatTableDataSource((this.form.get('albums') as FormArray).controls);
+        })
+     }
    }
    sortChangeHandler(evt: Sort): void {
     if (confirm("Confirm question?")) {
